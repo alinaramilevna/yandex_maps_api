@@ -5,7 +5,6 @@ import io
 from map_func import get_spn, get_coord, search_toponym, get_address
 from map_func import get_postal_code
 
-
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -174,6 +173,7 @@ class Example(QMainWindow):
         self.comboBox.addItem("Гибрид")
         self.comboBox.currentTextChanged.connect(self.changeView)
         self.pushButton.clicked.connect(self.searchObject)
+        self.checkBox.stateChanged.connect(self.get_postal_code)
         self.clear_push_button.clicked.connect(self.clearObject)
         self.refreshImage()
 
@@ -190,12 +190,17 @@ class Example(QMainWindow):
             self.lineEdit_2.setText(address)
             self.refreshImage()
 
+    def get_postal_code(self):
+        toponym = search_toponym(self.lineEdit.text())
+        address = get_address(toponym)
+        address += get_postal_code(address) if self.checkBox.checkState() else ''
+        self.lineEdit_2.setText(address)
+
     def clearObject(self):
         self.point = ""
         self.lineEdit_2.setText("")
         self.lineEdit.setText('')
         self.refreshImage()
-
 
     def keyPressEvent(self, event) -> None:
         # print("!!!!!!!")
@@ -237,18 +242,17 @@ class Example(QMainWindow):
 
     def getImage(self):
 
-
         api_server = "http://static-maps.yandex.ru/1.x/"
 
         params = {
             "ll": ",".join([str(self.lon), str(self.lat)]),
-            #"spn": ",".join([self.dx, self.dy]),
+            # "spn": ",".join([self.dx, self.dy]),
             "z": str(self.z),
             "l": self.view
         }
 
         if self.point:
-            params["pt"]  = f"{self.point},pm2dgl"
+            params["pt"] = f"{self.point},pm2dgl"
 
         response = requests.get(api_server, params=params)
 
@@ -278,4 +282,3 @@ if __name__ == '__main__':
     ex.show()
     sys.excepthook = except_hook
     sys.exit(app.exec())
-

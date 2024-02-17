@@ -17,7 +17,7 @@ def search_toponym(toponym_to_find):
 
     # Преобразуем ответ в json-объект
     json_response = response.json()
-    print(json_response)
+    # print(json_response)
     organization = json_response["features"][0]
     return organization
 
@@ -59,5 +59,5 @@ def get_postal_code(address):
     json_response = response.json()
     toponym = json_response["response"]["GeoObjectCollection"][
         "featureMember"][0]["GeoObject"]
-    print(toponym)
+    # print(toponym)
     return toponym['metaDataProperty']['GeocoderMetaData']['Address'].get("postal_code", "")
